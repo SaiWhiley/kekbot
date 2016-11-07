@@ -10,33 +10,80 @@ public class Main {
     static Random rnd = new Random();
 
 
-
     public static void main(String[] args) throws IOException {
 
-        System.out.println("Hello etc ready for shitposting\n");
+        System.out.println("Hello ready for shitposting\n");
 
         markovChain.put("_start", new Vector<String>());
         markovChain.put("_end", new Vector<String>());
-        ArrayList<List> dictionary = getDictionary();
+
+
+        ///get these here words
+        String inputString = "Buffalo bar is the venue run and tell this. Where the buffalo roam.";
+
+        //add to hashtable
+        addPost(inputString);
+
+        System.out.println("\ntesting hashtable input...");
+        Vector<String> test = markovChain.get("buffalo");
+        for(String string:test){
+            System.out.println(string);
+        }
+
     }
 
-    public static ArrayList<List> getDictionary(){
+    public static void addPost(String inputString){
+        //split into sentences
+        String[] sentences = inputString.split("\\p{Punct}");
 
-        ArrayList<List> dictionary = new ArrayList<List>();
+        for(String sentence: sentences){
+            System.out.print("\nSentence:");
+            System.out.println(sentence);
+            addSentence(sentence);
+        }
+    } //end addPost
 
-        //split input into words
-        String testString = "Buffalo bar is the venue run and tell this. Where the buffalo roam.";
-        String[] splitString = testString.split(" ");
-        //for every word
-        for (String currentWord:splitString) {
-            System.out.println(currentWord);
-            //if word is not already in the dictionary
-            if(!dictionary.contains(currentWord)){
-                //create a new array with key equal to word
+    public static void addSentence(String inputString) {
+        //split into words
+        String[] words = inputString.split(" ");
+        System.out.print("\nbreaking into words:");
+
+        //for each word
+        //if already added, get the suffix vector and add the word
+        //if not, add it to the word
+        //if its the first | last word chuck it in _start | _end key
+
+        for (int i = 0; i < words.length; i++) {
+            words[i] = words[i].toLowerCase();
+            System.out.println(words[i]);
+            //first and last words fisrt
+            if (i == 0) {
+                Vector<String> startWords = markovChain.get("_start");
+                startWords.add(words[i]);
+
+                Vector<String> suffix = markovChain.get(words[i]);
+                if (suffix == null) {
+                    suffix = new Vector<String>();
+                    suffix.add(words[i+1]);
+                    markovChain.put(words[i], suffix);
+                }
+            } else if (i == words.length - 1) {
+                Vector<String> endWords = markovChain.get("_end");
+                endWords.add(words[i]);
+
+            } else {
+                Vector<String> suffix = markovChain.get(words[i]);
+                if (suffix == null) {
+                    suffix = new Vector<String>();
+                    suffix.add(words[i+1]);
+                    markovChain.put(words[i], suffix);
+                } else {
+                    suffix.add(words[i+1]);
+                    markovChain.put(words[i], suffix);
+                }
             }
 
         }
-        return dictionary;
+    } // end addSentece
 
-    }
 }
