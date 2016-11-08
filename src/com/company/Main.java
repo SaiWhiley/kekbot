@@ -30,6 +30,9 @@ public class Main {
             System.out.println(string);
         }
 
+
+        generateSentence();
+
     }
 
     public static void addPost(String inputString){
@@ -37,6 +40,7 @@ public class Main {
         String[] sentences = inputString.split("\\p{Punct}");
 
         for(String sentence: sentences){
+            sentence = sentence + ".";
             System.out.print("\nSentence:");
             System.out.println(sentence);
             addSentence(sentence);
@@ -86,4 +90,22 @@ public class Main {
         }
     } // end addSentece
 
+    public static void generateSentence(){
+        //vector to hold
+        Vector<String> newSentence = new Vector<String>();
+
+        String nextWord="";
+
+        Vector<String> startWords = markovChain.get("_start");
+        nextWord = startWords.get(rnd.nextInt(startWords.size()));
+        newSentence.add(nextWord);
+
+        while(nextWord.charAt(nextWord.length()-1) != '.'){
+            Vector<String> wordSelection = markovChain.get(nextWord);
+            nextWord = wordSelection.get(rnd.nextInt(wordSelection.size()));
+            newSentence.add(nextWord);
+        }
+
+        System.out.println("New: " + newSentence.toString());
+    }
 }
